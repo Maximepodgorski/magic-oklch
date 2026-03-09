@@ -1,6 +1,7 @@
 ---
 title: "OKLCH Generator — 2/5 Color Engine"
-status: active
+status: shipped
+shipped: 2026-03-09
 created: 2026-03-08
 estimate: 3h
 tier: standard

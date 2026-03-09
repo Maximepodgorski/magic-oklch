@@ -1,6 +1,7 @@
 ---
 title: "OKLCH Generator — 1/5 Foundations"
-status: active
+status: shipped
+shipped: 2026-03-09
 created: 2026-03-08
 estimate: 2h
 tier: mini
