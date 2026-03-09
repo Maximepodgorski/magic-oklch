@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "culori": ["./node_modules/culori/fn"]
     }
   },
   "include": [

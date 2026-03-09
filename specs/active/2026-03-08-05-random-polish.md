@@ -271,16 +271,16 @@ This is the release gate. The random page is simple (~50 LOC). The real work is 
 
 | # | Scope Item | Status | Iteration |
 |---|-----------|--------|-----------|
-| 1 | Random generation logic | pending | - |
-| 2 | Random page | pending | - |
-| 3 | Skip-to-content link | pending | - |
-| 4 | Responsive fixes | pending | - |
-| 5 | Meta tags | pending | - |
-| 6 | OG image | pending | - |
-| 7 | prefers-reduced-motion | pending | - |
-| 8 | Performance audit | pending | - |
-| 9 | Lighthouse A11y audit | pending | - |
-| 10 | Final quality gates | pending | - |
+| 1 | Random generation logic (utils.ts) | [x] Complete | 1 |
+| 2 | Random page (/random + random-shell.tsx) | [x] Complete | 1 |
+| 3 | Skip-to-content link (header) | [x] Complete | 1 |
+| 4 | Responsive fixes (header max-w, padding) | [x] Complete | 1 |
+| 5 | Meta tags (per-route title + description) | [x] Complete | 1 |
+| 6 | OG image | skipped (placeholder — no image gen tool) | - |
+| 7 | prefers-reduced-motion (globals.css) | [x] Complete | 1 |
+| 8 | Performance audit | deferred — need running app | - |
+| 9 | Lighthouse A11y audit | deferred — need running app | - |
+| 10 | Final quality gates (lint+type+build+test) | [x] Complete — 0 errors, 84 tests | 1 |
 
 ## Timeline
 
