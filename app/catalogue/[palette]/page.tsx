@@ -13,8 +13,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!palette) return { title: "Not Found" };
 
   return {
-    title: palette.name,
-    description: `Explore the ${palette.name} OKLCH palette with ${palette.source === "tailwind" ? "Tailwind" : "custom"} shades.`,
+    title: `${palette.name} OKLCH Palette`,
+    description: `${palette.name} color palette in OKLCH with 11 perceptually uniform shades. ${palette.source === "tailwind" ? "Tailwind-inspired" : "Custom"} palette with APCA contrast scores, sRGB/P3 gamut info. Export as HEX, HSL, OKLCH, or CSS variables.`,
+    alternates: { canonical: `/catalogue/${id}` },
   };
 }
 

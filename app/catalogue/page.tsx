@@ -4,9 +4,10 @@ import { PageHeader } from "@/components/layout/page-header";
 import { CatalogueGrid } from "@/components/catalogue/catalogue-grid";
 
 export const metadata: Metadata = {
-  title: "Catalogue",
+  title: "OKLCH Palette Catalogue",
   description:
-    "Browse 22 Tailwind-inspired and 7 curated OKLCH palettes. Click any palette to open it in the generator.",
+    "Browse 29 ready-to-use OKLCH color palettes: 22 Tailwind-inspired and 7 custom. Each palette has 11 perceptually uniform shades with contrast scores.",
+  alternates: { canonical: "/catalogue" },
 };
 
 export default function CataloguePage() {
@@ -15,7 +16,7 @@ export default function CataloguePage() {
       <PageHeader
         icon={BiSolidGridAlt}
         title="Catalogue"
-        subtitle="Browse Tailwind-inspired and curated OKLCH palettes."
+        subtitle="Browse Tailwind-inspired and custom OKLCH palettes."
         iconBg="bg-muted"
       />
       <div className="px-10 py-7">

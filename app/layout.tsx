@@ -26,13 +26,60 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const SITE_URL = "https://magiklch.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Magiklch — OKLCH Palette Generator",
     template: "%s — Magiklch",
   },
   description:
-    "Generate beautiful OKLCH color palettes with perceptually uniform shades. Browse Tailwind-inspired palettes, check APCA contrast, and export in any format.",
+    "Free OKLCH color palette generator. Input any CSS color, get 11 perceptually uniform shades with APCA contrast scores. Export as HEX, HSL, OKLCH, or CSS variables.",
+  keywords: [
+    "OKLCH",
+    "color palette generator",
+    "OKLCH palette",
+    "color shades",
+    "APCA contrast",
+    "CSS colors",
+    "Tailwind colors",
+    "perceptual uniformity",
+    "wide gamut",
+    "P3 colors",
+    "color tool",
+  ],
+  authors: [{ name: "Magiklch" }],
+  creator: "Magiklch",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Magiklch",
+    title: "Magiklch — OKLCH Palette Generator",
+    description:
+      "Free OKLCH color palette generator. Input any CSS color, get 11 perceptually uniform shades with APCA contrast scores.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Magiklch — OKLCH Palette Generator",
+    description:
+      "Free OKLCH color palette generator. 11 perceptually uniform shades, APCA contrast, wide gamut support.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default function RootLayout({

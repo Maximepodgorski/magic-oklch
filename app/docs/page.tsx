@@ -20,9 +20,10 @@ const SECTIONS = [
 ];
 
 export const metadata: Metadata = {
-  title: "Documentation",
+  title: "OKLCH Color Space Guide",
   description:
-    "Everything you need to know about the OKLCH color space. Interactive demos, comparisons with HSL, wide gamut, and palette generation.",
+    "Interactive guide to the OKLCH color space. Compare HSL vs OKLCH uniformity, explore L/C/H channels, see wide gamut P3 colors, and build palettes live.",
+  alternates: { canonical: "/docs" },
 };
 
 const CHANNELS = [
