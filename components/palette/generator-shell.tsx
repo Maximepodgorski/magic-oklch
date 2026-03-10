@@ -1,18 +1,45 @@
 "use client";
 
 import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { BiSolidPalette } from "react-icons/bi";
 import { usePalette } from "@/hooks/use-palette";
-import { useColorFormat } from "@/hooks/use-color-format";
+import { useCopy } from "@/hooks/use-copy";
 import { generatePalette } from "@/lib/color-engine";
-import { PaletteHeader } from "./palette-header";
-import { PaletteGrid } from "./palette-grid";
+import { toCssOklch, toHex } from "@/lib/color-formatter";
+import { PageHeader } from "@/components/layout/page-header";
+import {
+  ExportFooter,
+  type ExportFormat,
+} from "@/components/layout/export-footer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ColorInput } from "./color-input";
 import { LchSliders } from "./lch-sliders";
-import { ExportPalette } from "./export-palette";
-import { toHex } from "@/lib/color-formatter";
-import type { OklchColor } from "@/types/color";
+import type { OklchColor, ShadeStep, PaletteShade } from "@/types/color";
 
-/** Live slider state — tracks which baseColor it was derived from */
+type Scale = 4 | 6 | 8 | 10 | 12;
+type GamutMode = "srgb" | "p3";
+
+const SCALE_OPTIONS: Scale[] = [4, 6, 8, 10, 12];
+
+const SCALE_STEPS: Record<Scale, ShadeStep[]> = {
+  4: [200, 400, 600, 800],
+  6: [100, 300, 500, 700, 800, 950],
+  8: [50, 200, 300, 500, 600, 700, 800, 950],
+  10: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
+  12: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 975],
+};
+
 interface LiveState {
   color: OklchColor;
   base: OklchColor;
@@ -22,22 +49,25 @@ function isSameColor(a: OklchColor, b: OklchColor) {
   return a.l === b.l && a.c === b.c && a.h === b.h;
 }
 
+function filterShades(shades: PaletteShade[], scale: Scale): PaletteShade[] {
+  const steps = SCALE_STEPS[scale];
+  return shades.filter((s) => steps.includes(s.step));
+}
+
 export function GeneratorShell() {
   const { palette, baseColor, name, setFromColor, updateUrl } = usePalette();
-  const { format, setFormat } = useColorFormat();
+  const { copy } = useCopy();
   const prevNameRef = useRef(palette.name);
-  const [exportOpen, setExportOpen] = useState(false);
-
-  // Live slider state — auto-invalidates when baseColor changes (no ref/effect needed)
   const [liveState, setLiveState] = useState<LiveState | null>(null);
+  const [scale, setScale] = useState<Scale>(12);
+  const [gamut, setGamut] = useState<GamutMode>("srgb");
+  const [exportFormat, setExportFormat] = useState<ExportFormat>("css");
 
-  // If baseColor changed (URL/color input), liveState is stale — fall back to baseColor
   const activeColor =
     liveState && isSameColor(liveState.base, baseColor)
       ? liveState.color
       : baseColor;
 
-  // Generate palette from active color (instant during drag)
   const activePalette = useMemo(
     () =>
       liveState && isSameColor(liveState.base, baseColor)
@@ -46,7 +76,11 @@ export function GeneratorShell() {
     [liveState, baseColor, name, palette]
   );
 
-  // Slider: instant local update
+  const visibleShades = useMemo(
+    () => (activePalette.shades ? filterShades(activePalette.shades, scale) : []),
+    [activePalette.shades, scale]
+  );
+
   const handleSliderLive = useCallback(
     (params: { h?: number; c?: number; l?: number }) => {
       setLiveState((prev) => {
@@ -64,18 +98,32 @@ export function GeneratorShell() {
     [baseColor]
   );
 
-  // Slider: commit to URL on release (accepts optional color for numeric input race fix)
   const handleSliderCommit = useCallback(
     (color?: OklchColor) => {
       const c = color ?? liveState?.color;
-      if (c) {
-        updateUrl({ h: c.h, c: c.c, l: c.l });
-      }
+      if (c) updateUrl({ h: c.h, c: c.c, l: c.l });
     },
     [liveState, updateUrl]
   );
 
-  // Announce palette changes to screen readers
+  const handleCopyVariables = useCallback(() => {
+    if (visibleShades.length === 0) return;
+
+    const isCss = exportFormat === "css";
+    const lines = visibleShades.map((shade) => {
+      const value = toCssOklch(shade.oklch);
+      return isCss
+        ? `  --color-${activePalette.id}-${shade.step}: ${value};`
+        : `$color-${activePalette.id}-${shade.step}: ${value};`;
+    });
+
+    const output = isCss
+      ? `:root {\n${lines.join("\n")}\n}`
+      : lines.join("\n");
+
+    copy(output, `${visibleShades.length} OKLCH values`);
+  }, [visibleShades, exportFormat, activePalette.id, copy]);
+
   useEffect(() => {
     if (activePalette.name !== prevNameRef.current) {
       prevNameRef.current = activePalette.name;
@@ -85,43 +133,131 @@ export function GeneratorShell() {
   }, [activePalette.name]);
 
   return (
-    <div className="flex flex-col gap-[var(--layout-gap-2xl)]">
-      <div className="flex flex-col gap-[var(--layout-gap-xl)]">
-        <div className="flex flex-col gap-[var(--layout-gap-xl)] sm:flex-row sm:items-end">
-          <ColorInput
-            defaultValue={toHex(baseColor)}
-            onColorChange={(color) => setFromColor(color)}
-            className="max-w-xs"
-          />
-        </div>
-
-        <LchSliders
-          baseColor={activeColor}
-          onLiveChange={handleSliderLive}
-          onCommit={handleSliderCommit}
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <PageHeader
+          icon={BiSolidPalette}
+          title="Generator"
+          subtitle="Generate OKLCH palettes with APCA contrast scoring."
         />
+
+        <div className="flex flex-col gap-7 px-10 py-7">
+          {/* Controls row */}
+          <div className="grid grid-cols-3 items-end gap-6">
+            {/* Seed Color */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-foreground">
+                Seed Color
+              </span>
+              <div className="flex items-center gap-3">
+                <div
+                  className="h-8 w-8 shrink-0 rounded-[var(--layout-radius-md)]"
+                  style={{
+                    backgroundColor: toHex(activeColor),
+                    forcedColorAdjust: "none",
+                  }}
+                />
+                <ColorInput
+                  defaultValue={toHex(baseColor)}
+                  externalValue={toHex(activeColor)}
+                  onColorChange={(color) => setFromColor(color)}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+
+            {/* Shades */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-foreground">
+                Shades
+              </span>
+              <Select
+                value={String(scale)}
+                onValueChange={(v) => setScale(Number(v) as Scale)}
+              >
+                <SelectTrigger className="w-full" aria-label="Shades">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SCALE_OPTIONS.map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {String(n)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Gamut */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-foreground">
+                Gamut
+              </span>
+              <Select
+                value={gamut}
+                onValueChange={(v) => setGamut(v as GamutMode)}
+              >
+                <SelectTrigger className="w-full" aria-label="Gamut">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="srgb">sRGB</SelectItem>
+                  <SelectItem value="p3">Display P3</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Sliders */}
+          <LchSliders
+            baseColor={activeColor}
+            onLiveChange={handleSliderLive}
+            onCommit={handleSliderCommit}
+          />
+
+          {/* Palette swatches */}
+          {visibleShades.length > 0 && (
+            <div className="grid gap-2 pb-4" style={{ gridTemplateColumns: `repeat(${visibleShades.length}, 1fr)` }}>
+              {visibleShades.map((shade) => (
+                <Tooltip key={shade.step}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => copy(shade.cssOklch, `Shade ${shade.step}`)}
+                      className={`group/swatch relative aspect-square w-full cursor-pointer rounded-[var(--layout-radius-2xl)] transition-transform duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${shade.oklch.l > 0.85 ? "border border-border" : ""}`}
+                      style={{
+                        backgroundColor:
+                          gamut === "p3" ? shade.cssOklch : shade.hex,
+                        forcedColorAdjust: "none",
+                      }}
+                      aria-label={`Shade ${shade.step}: ${shade.cssOklch}`}
+                    >
+                      <span className={`absolute top-2 left-2 rounded-[var(--layout-radius-md)] px-1.5 py-0.5 font-mono text-xs opacity-0 transition-opacity group-hover/swatch:opacity-100 ${shade.oklch.l > 0.65 ? "text-gray-900" : "bg-black/20 text-white"}`}>
+                        {shade.step}
+                      </span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" size="sm" className="max-w-none whitespace-nowrap">
+                    <span className="font-mono">{shade.cssOklch}</span>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      <PaletteHeader
-        palette={activePalette}
-        format={format}
-        onFormatChange={setFormat}
-        onExport={() => setExportOpen((v) => !v)}
+      <ExportFooter
+        format={exportFormat}
+        onFormatChange={setExportFormat}
+        onCopy={handleCopyVariables}
       />
 
-      <ExportPalette
-        palette={activePalette}
-        open={exportOpen}
-        onClose={() => setExportOpen(false)}
+      <div
+        id="copy-live"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
       />
-
-      {activePalette.shades && (
-        <PaletteGrid
-          shades={activePalette.shades}
-          format={format}
-          paletteName={activePalette.id}
-        />
-      )}
     </div>
   );
 }
