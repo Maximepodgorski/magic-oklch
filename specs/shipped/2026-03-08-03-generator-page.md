@@ -1,6 +1,7 @@
 ---
 title: "OKLCH Generator — 3/5 Generator Page"
-status: active
+status: shipped
+shipped: 2026-03-10
 created: 2026-03-08
 estimate: 5h
 tier: standard
