@@ -406,6 +406,9 @@ This is the core product. Format default=HEX, Copy All=CSS custom properties, se
 | 11 | palette-header (Copy All CSS vars) | [x] Complete | 1 |
 | 12 | aria-live region | [x] Complete | 1 |
 | 13 | app/page.tsx (Suspense) | [x] Complete | 1 (+ generator-shell.tsx + palette-skeleton.tsx) |
+| 14 | lch-sliders.tsx (L/C/H range inputs + numeric fields) | [x] Complete | 2 |
+| 15 | export-palette.tsx (5 export formats) | [x] Complete | 2 |
+| 16 | shade-card tooltip (values on hover only) | [x] Complete | 2 |
 
 ## Timeline
 
