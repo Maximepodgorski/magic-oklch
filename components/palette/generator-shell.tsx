@@ -12,56 +12,68 @@ import { ExportPalette } from "./export-palette";
 import { toHex } from "@/lib/color-formatter";
 import type { OklchColor } from "@/types/color";
 
+/** Live slider state — tracks which baseColor it was derived from */
+interface LiveState {
+  color: OklchColor;
+  base: OklchColor;
+}
+
+function isSameColor(a: OklchColor, b: OklchColor) {
+  return a.l === b.l && a.c === b.c && a.h === b.h;
+}
+
 export function GeneratorShell() {
   const { palette, baseColor, name, setFromColor, updateUrl } = usePalette();
   const { format, setFormat } = useColorFormat();
   const prevNameRef = useRef(palette.name);
   const [exportOpen, setExportOpen] = useState(false);
 
-  // Local color for real-time slider preview (bypasses URL roundtrip)
-  const [liveColor, setLiveColor] = useState<OklchColor | null>(null);
+  // Live slider state — auto-invalidates when baseColor changes (no ref/effect needed)
+  const [liveState, setLiveState] = useState<LiveState | null>(null);
 
-  // Sync liveColor when URL-driven baseColor changes (e.g. from color input)
-  const prevBaseRef = useRef(baseColor);
-  useEffect(() => {
-    if (
-      prevBaseRef.current.l !== baseColor.l ||
-      prevBaseRef.current.c !== baseColor.c ||
-      prevBaseRef.current.h !== baseColor.h
-    ) {
-      prevBaseRef.current = baseColor;
-      setLiveColor(null); // clear override, use URL value
-    }
-  }, [baseColor]);
-
-  // The color used for palette generation — local override during drag, URL otherwise
-  const activeColor = liveColor ?? baseColor;
+  // If baseColor changed (URL/color input), liveState is stale — fall back to baseColor
+  const activeColor =
+    liveState && isSameColor(liveState.base, baseColor)
+      ? liveState.color
+      : baseColor;
 
   // Generate palette from active color (instant during drag)
   const activePalette = useMemo(
-    () => (liveColor ? generatePalette(liveColor, name) : palette),
-    [liveColor, name, palette]
+    () =>
+      liveState && isSameColor(liveState.base, baseColor)
+        ? generatePalette(liveState.color, name)
+        : palette,
+    [liveState, baseColor, name, palette]
   );
 
   // Slider: instant local update
-  const handleSliderLive = useCallback((params: { h?: number; c?: number; l?: number }) => {
-    setLiveColor((prev) => {
-      const base = prev ?? baseColor;
-      return {
-        l: params.l ?? base.l,
-        c: params.c ?? base.c,
-        h: params.h ?? base.h,
-      };
-    });
-  }, [baseColor]);
+  const handleSliderLive = useCallback(
+    (params: { h?: number; c?: number; l?: number }) => {
+      setLiveState((prev) => {
+        const base = prev?.color ?? baseColor;
+        return {
+          color: {
+            l: params.l ?? base.l,
+            c: params.c ?? base.c,
+            h: params.h ?? base.h,
+          },
+          base: baseColor,
+        };
+      });
+    },
+    [baseColor]
+  );
 
   // Slider: commit to URL on release (accepts optional color for numeric input race fix)
-  const handleSliderCommit = useCallback((color?: OklchColor) => {
-    const c = color ?? liveColor;
-    if (c) {
-      updateUrl({ h: c.h, c: c.c, l: c.l });
-    }
-  }, [liveColor, updateUrl]);
+  const handleSliderCommit = useCallback(
+    (color?: OklchColor) => {
+      const c = color ?? liveState?.color;
+      if (c) {
+        updateUrl({ h: c.h, c: c.c, l: c.l });
+      }
+    },
+    [liveState, updateUrl]
+  );
 
   // Announce palette changes to screen readers
   useEffect(() => {
