@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-OKLCH color palette generator — pure client-side Next.js app. Input any CSS color, get 11 perceptually uniform shades using OKLCH color science. No backend, no database.
+Magiklch — OKLCH color palette generator. Pure client-side Next.js app. Input any CSS color, get 11 perceptually uniform shades using OKLCH color science. No backend, no database.
 
 ## Commands
 

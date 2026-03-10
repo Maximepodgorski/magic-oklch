@@ -19,8 +19,8 @@ export function Header() {
 
       {/* Left — Logo */}
       <Link href="/" className="flex items-center gap-2">
-        <LogoSvg width={103} height={22} aria-label="MagicOK" />
-        <Badge variant="neutral" size="sm" type="light">v1.0</Badge>
+        <LogoSvg width={103} height={22} aria-label="Magiklch" />
+        <Badge variant="neutral" size="sm" type="light">Beta</Badge>
       </Link>
 
       {/* Right — GitHub + Theme */}
