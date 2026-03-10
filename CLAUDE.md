@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Magiklch — OKLCH color palette generator. Pure client-side Next.js app. Input any CSS color, get 11 perceptually uniform shades using OKLCH color science. No backend, no database.
 
+Live: https://magiklch.vercel.app
+
 ## Commands
 
 ```bash
@@ -20,27 +22,40 @@ npx vitest run path  # Run single test file
 ## Architecture
 
 ```
-User Input (any CSS color) → color-parser → color-engine → Palette { 11 shades }
-                                               ├── curves (L/C/H per step)
-                                               ├── gamut (sRGB/P3 check + clamp)
-                                               ├── contrast (APCA via apca-w3)
-                                               └── color-formatter (HEX/HSL/OKLCH/cssvar)
+User Input (any CSS color) > color-parser > color-engine > Palette { 11 shades }
+                                               |-- curves (L/C/H per step)
+                                               |-- gamut (sRGB/P3 check + clamp)
+                                               |-- contrast (APCA via apca-w3)
+                                               +-- color-formatter (HEX/HSL/OKLCH/cssvar)
 ```
 
 ### Color Engine (`lib/`)
 
-All functions are **pure** — no I/O, no state, no DOM. Key design decisions:
+All functions are **pure** (no I/O, no state, no DOM). 84 test cases via Vitest.
+
+| File | Purpose |
+|------|---------|
+| `color-parser.ts` | Parse any CSS color (hex, hsl, oklch, rgb, named) to OKLCH |
+| `color-engine.ts` | Generate 11 shades from OKLCH input with gamut + APCA |
+| `color-formatter.ts` | Format OKLCH to hex, hsl, CSS oklch, CSS var |
+| `contrast.ts` | APCA contrast calculation (apca-w3) |
+| `curves.ts` | L/C/H curves per shade step (50-975) |
+| `gamut.ts` | Gamut check (sRGB vs P3) + sRGB clamping |
+| `utils.ts` | Utility functions (round, clamp) |
+| `setup-culori.ts` | Register culori modes/parsers (MUST import before using culori) |
+
+Key design decisions:
 
 - Input lightness is always **discarded** — `SHADE_LIGHTNESS` curve determines L for each shade
 - Gamut check happens BEFORE sRGB mapping — `gamut` field reflects the original color
 - HEX/HSL output comes from the sRGB-mapped (safe) version
 - APCA uses absolute Lc values (`Math.abs`), not signed
 - NaN hue guard for achromatic inputs (`h = isNaN(h) ? 0 : h`)
-- Every file using culori must start with `import "./setup-culori"` (registers modes/parsers)
+- Every file using culori must start with `import "./setup-culori"`
 
 ### culori Tree-Shaking
 
-culori is imported via `culori/fn` (enforced by tsconfig + vitest aliases). Never import from `culori` directly — it would bundle the entire library.
+culori is imported via `culori/fn` (enforced by tsconfig + vitest aliases). Never import from `culori` directly.
 
 ```json
 // tsconfig paths
@@ -55,9 +70,18 @@ All palette state lives in URL search params (`?h=259&c=0.214&name=blue`). No gl
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Generator — input color, see 11 shades |
-| `/catalogue` | Browse Tailwind + curated palettes |
+| `/` | Generator: input color, see 11 shades, export |
+| `/catalogue` | Browse 22 Tailwind + 7 curated palettes |
+| `/catalogue/[palette]` | Palette detail with full specs |
 | `/random` | Random palette generator |
+| `/docs` | Interactive OKLCH guide with 5 live demos |
+
+### Layout Structure
+
+- **Header** (top): Logo + Beta badge, theme pill, GitHub link
+- **Sidebar** (left, collapsible): Navigation (Generator, Catalogue, Shuffle, Docs, Built with Lyse, LinkedIn)
+- **Main content**: Page-specific, scrollable
+- **Export footer**: Only on generator + palette detail pages
 
 ## Component System
 
@@ -75,6 +99,18 @@ Customize appearance by editing `.css` only — never hardcode colors in `.tsx`.
 
 action-card, avatar, badge, banner-info, button, callout-card, checkbox, chip, dropdown-menu, input, menu, modal, progress, radio, select, spinner, spotlight-card, tabs, tag, textarea, toast, toggle, tooltip
 
+### Component Folders
+
+| Folder | Contents |
+|--------|----------|
+| `components/ui/` | 20+ Lyse Registry components (dual-file pattern) |
+| `components/layout/` | header, sidebar, sidebar-context, page-header, theme-pill, footer, export-footer, logo-svg |
+| `components/palette/` | color-input, lch-sliders, palette-grid, shade-card, format-toggle, export-palette, generator-shell |
+| `components/catalogue/` | catalogue-grid, catalogue-filter, palette-preview, palette-detail-shell |
+| `components/docs/` | section-nav, channel-explorer, uniformity-demo, gradient-comparison, gamut-explorer, live-palette-demo |
+| `components/random/` | random-shell |
+| `components/shared/` | copy-button, gamut-badge, contrast-badge |
+
 ### Component Conventions
 
 - Named exports only (no `default` exports)
@@ -82,7 +118,27 @@ action-card, avatar, badge, banner-info, button, callout-card, checkbox, chip, d
 - CVA for variant management, CSS classes for theming
 - Focus ring: `box-shadow` double-layer (white gap + color ring), not `outline`
 - `isIconOnly` prop adds `aspect-square px-0`
-- Compound components share context (e.g., Tabs → TabsContext stores variant + size)
+- Compound components share context (e.g., Tabs > TabsContext stores variant + size)
+
+## Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `use-palette.ts` | Manage palette state from URL params (h, c, l, name) |
+| `use-color-format.ts` | Manage output format preference (hex/hsl/oklch/cssvar) |
+| `use-copy.ts` | Copy-to-clipboard with toast notification |
+
+## Data (`data/`)
+
+| File | Purpose |
+|------|---------|
+| `all-palettes.ts` | Union of tailwind + curated palettes |
+| `tailwind-palettes.ts` | 22 Tailwind-inspired palettes |
+| `curated-palettes.ts` | 7 curated palettes |
+
+## Types (`types/color.ts`)
+
+Core types: `OklchColor`, `ShadeStep` (50-975), `GamutStatus`, `ContrastLevel`, `PaletteShade`, `Palette`, `ColorInput`, `ColorFormat`, `PaletteUrlState`
 
 ## CSS Token Architecture
 
@@ -96,7 +152,7 @@ Layer 2: Semantics       semantic-colors.css, semantic-global.css
          (mode-aware)    --background-brand-strong-default (flips in .dark)
 
 Layer 3: shadcn Bridge   shadcn-bridge.css
-         (integration)   --background, --primary → maps to Layer 2 tokens
+         (integration)   --background, --primary > maps to Layer 2 tokens
 ```
 
 **Always use semantic tokens (Layer 2)** in component CSS. Use primitives only when semantic tokens don't cover the case. Never use raw color values.
@@ -111,14 +167,35 @@ Layer 3: shadcn Bridge   shadcn-bridge.css
 
 No `tailwind.config.ts` — configured via `@theme inline {}` in `globals.css`. CSS custom properties are mapped to Tailwind utilities there.
 
-## Types (`types/color.ts`)
+## Stack
 
-Core types: `OklchColor`, `ShadeStep` (50-950), `GamutStatus`, `ContrastLevel`, `PaletteShade`, `Palette`, `ColorInput`, `ColorFormat`
+| Layer | Tech |
+|-------|------|
+| Framework | Next.js 16 + React 19 + Tailwind v4 |
+| UI | Lyse Registry + Radix UI + CVA |
+| Color | culori (tree-shaken) + apca-w3 |
+| Fonts | DM Sans (headings) + Inter (body) |
+| Icons | react-icons/bi (BoxIcons) + lucide-react |
+| Theme | next-themes |
+| Testing | Vitest (84 tests on pure functions) |
+| Deploy | Vercel |
+
+## Docs Page (`/docs`)
+
+Interactive OKLCH guide with 7 sections and 5 client-side demo components:
+
+| Section | Demo Component | What it does |
+|---------|---------------|--------------|
+| Introduction | (static) | Hero, OKLCH spectrum bar, badges |
+| Problem with HSL | `uniformity-demo.tsx` | Single lightness slider, 8 hues HSL vs OKLCH |
+| Three channels | `channel-explorer.tsx` | L/C/H sliders with live color bar + CSS output |
+| Better gradients | `gradient-comparison.tsx` | 4 HSL vs OKLCH gradient pairs side by side |
+| Wide gamut | `gamut-explorer.tsx` | Hue + chroma sliders with sRGB/P3 badge |
+| Build palettes | `live-palette-demo.tsx` | Color input with 4 presets, instant 11-shade output |
+| Use in CSS | (static) | Single code block with syntax examples |
+
+Right-side sticky anchor nav (`section-nav.tsx`) visible on xl+ screens, uses IntersectionObserver on `#main-content`.
 
 ## Specs
 
-Implementation is driven by specs in `specs/active/`. Reference docs in `docs/` for color science (`COLORS.md`), engineering (`ENGINEERING.md`), design (`DESIGN.md`), and palette algorithms (`PALETTES.md`).
-
-## Status
-
-Spec 1 (Foundations) and Spec 2 (Color Engine) are complete. Specs 3-5 (Generator Page, Catalogue, Random + Polish) are pending.
+All specs shipped. Reference docs in `docs/` for color science (`COLORS.md`), engineering (`ENGINEERING.md`), design (`DESIGN.md`), and palette algorithms (`PALETTES.md`).
