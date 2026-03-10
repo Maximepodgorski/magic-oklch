@@ -18,6 +18,7 @@ export const SHADE_LIGHTNESS: Record<ShadeStep, number> = {
   800: 0.42,
   900: 0.37,
   950: 0.27,
+  975: 0.2,
 };
 
 /**
@@ -36,6 +37,7 @@ export const CHROMA_MULTIPLIER: Record<ShadeStep, number> = {
   800: 0.75,
   900: 0.6,
   950: 0.4,
+  975: 0.25,
 };
 
 /**
