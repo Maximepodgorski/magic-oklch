@@ -5,7 +5,7 @@ export interface OklchColor {
   h: number; // Hue 0-360
 }
 
-/** Shade step values matching Tailwind convention */
+/** Shade step values matching Tailwind convention + 975 for 12-shade palettes */
 export type ShadeStep =
   | 50
   | 100
@@ -17,10 +17,11 @@ export type ShadeStep =
   | 700
   | 800
   | 900
-  | 950;
+  | 950
+  | 975;
 
 export const SHADE_STEPS: readonly ShadeStep[] = [
-  50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950,
+  50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 975,
 ] as const;
 
 /** Gamut status for a color */

@@ -8,8 +8,8 @@ const blueBase: OklchColor = { l: 0.65, c: 0.2, h: 259 };
 describe("generatePalette", () => {
   const palette = generatePalette(blueBase, "Blue");
 
-  it("returns 11 shades", () => {
-    expect(palette.shades).toHaveLength(11);
+  it("returns 12 shades", () => {
+    expect(palette.shades).toHaveLength(12);
   });
 
   it("has all shade steps in order", () => {
@@ -68,7 +68,7 @@ describe("generatePalette — achromatic", () => {
   it("handles gray (hue=0, chroma=0)", () => {
     const gray: OklchColor = { l: 0.5, c: 0, h: 0 };
     const palette = generatePalette(gray, "Gray");
-    expect(palette.shades).toHaveLength(11);
+    expect(palette.shades).toHaveLength(12);
     // All chroma values should be 0
     for (const shade of palette.shades!) {
       expect(shade.oklch.c).toBe(0);
@@ -80,7 +80,7 @@ describe("generatePaletteFromString", () => {
   it("generates from hex string", () => {
     const palette = generatePaletteFromString("#3b82f6", "Blue");
     expect(palette).not.toBeNull();
-    expect(palette!.shades).toHaveLength(11);
+    expect(palette!.shades).toHaveLength(12);
     expect(palette!.name).toBe("Blue");
   });
 

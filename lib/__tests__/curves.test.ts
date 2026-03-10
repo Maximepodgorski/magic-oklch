@@ -8,8 +8,8 @@ import {
 import { SHADE_STEPS } from "@/types/color";
 
 describe("SHADE_LIGHTNESS", () => {
-  it("has all 11 shade steps", () => {
-    expect(Object.keys(SHADE_LIGHTNESS)).toHaveLength(11);
+  it("has all 12 shade steps", () => {
+    expect(Object.keys(SHADE_LIGHTNESS)).toHaveLength(12);
   });
 
   it("is monotonically decreasing (lighter → darker)", () => {
@@ -48,9 +48,9 @@ describe("getHueShift", () => {
     expect(warmShift).toBeGreaterThan(coolShift);
   });
 
-  it("returns zero shift at mid-shade", () => {
-    // t = 0.5 → shift = (0.5 - 0.5) * maxShift = 0
-    expect(getHueShift(200, 500)).toBe(0);
+  it("returns near-zero shift at mid-shade", () => {
+    // 500 is near the middle of the 12-step scale
+    expect(getHueShift(200, 500)).toBeCloseTo(0, 0);
   });
 
   it("light shades shift positive, dark shades shift negative", () => {

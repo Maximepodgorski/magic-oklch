@@ -19,7 +19,7 @@ const buttonVariants = cva(
         xs: "h-[var(--layout-size-md)] gap-[var(--layout-gap-xs)] px-[var(--layout-padding-xs)] rounded-[var(--layout-radius-lg)] text-content-caption [&_svg]:size-3.5",
         sm: "h-[var(--layout-size-lg)] gap-[var(--layout-gap-sm)] px-[var(--layout-padding-md)] rounded-[var(--layout-radius-lg)] text-content-note [&_svg]:h-[var(--layout-size-xs)] [&_svg]:w-[var(--layout-size-xs)]",
         md: "h-[var(--layout-size-xl)] gap-[var(--layout-gap-sm)] px-[var(--layout-padding-lg)] rounded-[var(--layout-radius-lg)] text-content-note [&_svg]:h-[var(--layout-size-xs)] [&_svg]:w-[var(--layout-size-xs)]",
-        lg: "h-[var(--layout-size-2xl)] gap-[var(--layout-gap-sm)] px-[var(--layout-padding-xl)] rounded-[var(--layout-radius-xl)] text-content-body [&_svg]:h-[var(--layout-size-sm)] [&_svg]:w-[var(--layout-size-sm)]",
+        lg: "h-[var(--layout-size-2xl)] gap-[var(--layout-gap-sm)] px-[var(--layout-padding-xl)] rounded-[var(--layout-radius-lg)] text-content-body [&_svg]:h-[var(--layout-size-sm)] [&_svg]:w-[var(--layout-size-sm)]",
       },
     },
     defaultVariants: {
