@@ -1,6 +1,7 @@
 ---
 title: "OKLCH Generator — 5/5 Random Page & Polish"
-status: active
+status: shipped
+shipped: 2026-03-10
 created: 2026-03-08
 estimate: 2h
 tier: mini
