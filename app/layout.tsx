@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Inter, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/layout/header";
 import { AppSidebar } from "@/components/layout/sidebar";
@@ -94,6 +95,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${inter.variable} ${geistMono.variable}`}
     >
       <body className="antialiased">
+        <Analytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

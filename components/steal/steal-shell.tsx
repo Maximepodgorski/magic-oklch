@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { BiDroplet } from "react-icons/bi";
 import { PageHeader } from "@/components/layout/page-header";
@@ -137,6 +137,40 @@ function OnboardingSteps() {
   );
 }
 
+function HowItWorksToggle() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        How it works
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          className={`size-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <path
+            fillRule="evenodd"
+            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <OnboardingSteps />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function StealShell() {
   const searchParams = useSearchParams();
   const colorsParam = searchParams.get("colors") || "";
@@ -157,7 +191,7 @@ export function StealShell() {
   if (!hasColors) {
     return (
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex flex-1 flex-col items-center justify-center gap-10 px-20">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-20 pb-[12vh]">
           {/* Hero top */}
           <div className="flex flex-col items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-[10px] border border-border bg-[var(--background-neutral-faint-default)]">
@@ -181,11 +215,8 @@ export function StealShell() {
             </p>
           </div>
 
-          {/* Color dots */}
-          <ColorDotsStrip />
-
-          {/* Steps */}
-          <OnboardingSteps />
+          {/* How it works toggle */}
+          <HowItWorksToggle />
         </div>
       </div>
     );
