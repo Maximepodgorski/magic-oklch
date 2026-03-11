@@ -14,7 +14,7 @@ function ActionCard({
   ...props
 }: React.ComponentProps<"div"> & {
   title?: string
-  description?: string
+  description?: React.ReactNode
   icon?: React.ReactNode
   logo?: React.ReactNode
   action?: React.ReactNode

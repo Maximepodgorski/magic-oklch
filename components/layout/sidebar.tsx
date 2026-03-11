@@ -7,7 +7,7 @@ import {
   BiSolidGridAlt,
   BiSolidBookOpen,
 } from "react-icons/bi";
-import { BiShuffle, BiLogoLinkedinSquare, BiLinkExternal } from "react-icons/bi";
+import { BiShuffle, BiDroplet, BiLogoLinkedinSquare, BiLinkExternal } from "react-icons/bi";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar-context";
 import type { IconType } from "react-icons";
@@ -18,10 +18,26 @@ interface NavItem {
   icon: IconType;
 }
 
-const mainNav: NavItem[] = [
-  { href: "/", label: "Generator", icon: BiSolidPalette },
-  { href: "/catalogue", label: "Catalogue", icon: BiSolidGridAlt },
-  { href: "/random", label: "Shuffle", icon: BiShuffle },
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const mainNav: NavGroup[] = [
+  {
+    label: "Features",
+    items: [
+      { href: "/", label: "Generator", icon: BiSolidPalette },
+      { href: "/steal", label: "Steal", icon: BiDroplet },
+    ],
+  },
+  {
+    label: "Explore",
+    items: [
+      { href: "/catalogue", label: "Catalogue", icon: BiSolidGridAlt },
+      { href: "/random", label: "Shuffle", icon: BiShuffle },
+    ],
+  },
 ];
 
 const bottomNav: NavItem[] = [
@@ -76,9 +92,16 @@ export function AppSidebar() {
   return (
     <aside className="flex w-56 shrink-0 flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)]">
       {/* Main navigation */}
-      <nav className="flex flex-1 flex-col gap-0.5 p-3" aria-label="Main">
-        {mainNav.map((item) => (
-          <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
+      <nav className="flex flex-1 flex-col gap-4 p-3" aria-label="Main">
+        {mainNav.map((group) => (
+          <div key={group.label} className="flex flex-col gap-0.5">
+            <span className="px-3 pb-1 text-content-caption font-accent text-muted-foreground">
+              {group.label}
+            </span>
+            {group.items.map((item) => (
+              <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
+            ))}
+          </div>
         ))}
       </nav>
 

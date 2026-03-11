@@ -15,7 +15,7 @@
  * Content (surface)
  * -------------------------------- */
 .modal-content {
-  background: var(--background-neutral-faint-default);
+  background: var(--background-base);
   border: var(--layout-border-thin) solid var(--border-default);
   border-radius: var(--layout-radius-xl);
   --modal-shadow:
