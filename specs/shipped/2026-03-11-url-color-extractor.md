@@ -343,3 +343,4 @@ Spec rewritten after spec-review pivot: server proxy → bookmarklet architectur
 | plan | 2026-03-11T00:00:00Z | - | Created |
 | spec-review | 2026-03-11T00:00:00Z | - | Pivoted from server proxy to bookmarklet architecture |
 | spec-update | 2026-03-11T00:00:00Z | - | Updated with bookmarklet arch, Action Card modal, removed paste CSS |
+| done | 2026-03-11T12:45:00Z | ~4h | Shipped: 9 scope items, 99 tests, 3 review blockers fixed |
