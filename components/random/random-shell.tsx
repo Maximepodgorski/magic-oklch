@@ -126,7 +126,7 @@ export function RandomShell() {
 
           {/* Palette swatches */}
           {palette.shades && (
-            <div key={shuffleKey} className="grid gap-2 overflow-x-auto" style={{ gridTemplateColumns: `repeat(${palette.shades.length}, minmax(44px, 1fr))` }}>
+            <div key={shuffleKey} className="grid gap-2" style={{ gridTemplateColumns: `repeat(${palette.shades.length}, minmax(44px, 1fr))` }}>
               {palette.shades.map((shade, index) => (
                 <Tooltip key={shade.step}>
                   <TooltipTrigger asChild>

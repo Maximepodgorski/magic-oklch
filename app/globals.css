@@ -15,6 +15,7 @@
 
 /* App-specific tokens */
 :root {
+  --radius: 0.5rem;
   --surface: oklch(0.97 0 0);
 
   /* App-level semantic tokens bridging Lyse → Tailwind v4 utilities */
