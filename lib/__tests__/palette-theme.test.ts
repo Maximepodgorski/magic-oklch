@@ -174,6 +174,38 @@ describe("fallback behavior (AC-E1)", () => {
   });
 });
 
+describe("custom brand pipeline (AC-2, AC-E1)", () => {
+  it("generatePalette produces 12 shades, filtering step 975 yields 11 hex values", async () => {
+    const { generatePalette } = await import("../color-engine");
+    const palette = generatePalette({ l: 0.65, c: 0.214, h: 259 }, "custom");
+    expect(palette.shades).toHaveLength(12);
+
+    const hexValues = palette.shades!
+      .filter((s) => s.step !== 975)
+      .map((s) => s.hex);
+    expect(hexValues).toHaveLength(11);
+    hexValues.forEach((hex) => expect(hex).toMatch(/^#[0-9a-f]{6}$/i));
+  });
+
+  it("filtered custom hex produces valid brandScopeCss output", async () => {
+    const { generatePalette } = await import("../color-engine");
+    const palette = generatePalette({ l: 0.65, c: 0.214, h: 259 }, "custom");
+    const hexValues = palette.shades!
+      .filter((s) => s.step !== 975)
+      .map((s) => s.hex);
+
+    const css = brandScopeCss(scopeId, hexValues);
+    expect(css).toContain("--root-color-brand-050:");
+    expect(css).toContain("--root-color-brand-950:");
+    expect(css).toContain("--primary:");
+  });
+
+  it("getStripeHex returns empty for unknown 'custom' id (fallback trigger)", () => {
+    const hex = getStripeHex("custom");
+    expect(hex).toEqual([]);
+  });
+});
+
 describe("token data integrity", () => {
   it("brand light semantic tokens all reference --root-color-brand-* or --root-opacity-brand-*", () => {
     for (const [, value] of Object.entries(BRAND_SEMANTIC_TOKENS_LIGHT)) {

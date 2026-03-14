@@ -18,11 +18,12 @@ export const NEUTRAL_PALETTES: Palette[] = [
   ...TAILWIND_PALETTES.filter((p) => p.id === "zinc" || p.id === "neutral"),
 ];
 
-/** All chromatic palettes — Tailwind (17) + curated (7) — for brand token overrides */
-export const BRAND_PALETTES: Palette[] = [
-  ...TAILWIND_PALETTES.filter((p) => !NEUTRAL_IDS.has(p.id)),
-  ...CURATED_PALETTES,
-];
+/** Curated brand palettes for Blocks preview — full hue coverage, no close neighbors */
+const BRAND_IDS = ["blue", "indigo", "violet", "purple", "pink", "rose", "red"];
+
+export const BRAND_PALETTES: Palette[] = BRAND_IDS
+  .map((id) => TAILWIND_PALETTES.find((p) => p.id === id))
+  .filter((p): p is Palette => p !== undefined);
 
 /**
  * Get stripe hex colors for any palette by id.

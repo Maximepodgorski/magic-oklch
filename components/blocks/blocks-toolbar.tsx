@@ -17,6 +17,7 @@ interface BlocksToolbarProps {
   neutralId: string;
   onBrandChange: (id: string) => void;
   onNeutralChange: (id: string) => void;
+  customBrandHex?: string[];
 }
 
 function PaletteDots({ paletteId }: { paletteId: string }) {
@@ -72,11 +73,53 @@ function PaletteSelect({
   );
 }
 
+function CustomBrandIndicator({
+  hexColors,
+  onPresetSelect,
+}: {
+  hexColors: string[];
+  onPresetSelect: (id: string) => void;
+}) {
+  const dotIndices = [0, 2, 4, 6, 8];
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm font-medium text-[var(--text-base-moderate)]">
+        Brand
+      </span>
+      <Select onValueChange={onPresetSelect}>
+        <SelectTrigger size="md" className="w-auto min-w-[140px] gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              {dotIndices.map((idx) => (
+                <span
+                  key={idx}
+                  className="inline-block size-3 rounded-full border border-[var(--border-default)]"
+                  style={{ backgroundColor: hexColors[idx] ?? "#888" }}
+                />
+              ))}
+            </div>
+            <span>Your palette</span>
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          {BRAND_PALETTES.map((p) => (
+            <SelectItem key={p.id} value={p.id}>
+              {p.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export function BlocksToolbar({
   brandId,
   neutralId,
   onBrandChange,
   onNeutralChange,
+  customBrandHex,
 }: BlocksToolbarProps) {
   return (
     <div
@@ -89,12 +132,19 @@ export function BlocksToolbar({
         onChange={onNeutralChange}
         palettes={NEUTRAL_PALETTES}
       />
-      <PaletteSelect
-        label="Brand"
-        value={brandId}
-        onChange={onBrandChange}
-        palettes={BRAND_PALETTES}
-      />
+      {customBrandHex ? (
+        <CustomBrandIndicator
+          hexColors={customBrandHex}
+          onPresetSelect={onBrandChange}
+        />
+      ) : (
+        <PaletteSelect
+          label="Brand"
+          value={brandId}
+          onChange={onBrandChange}
+          palettes={BRAND_PALETTES}
+        />
+      )}
     </div>
   );
 }
