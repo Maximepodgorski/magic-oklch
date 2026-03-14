@@ -92,6 +92,22 @@
   border: var(--layout-border-thin) solid var(--border-default);
 }
 
+/* Force scrollbar visible on the viewport */
+.select-content [data-radix-select-viewport] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+.select-content [data-radix-select-viewport]::-webkit-scrollbar {
+  width: 6px;
+}
+.select-content [data-radix-select-viewport]::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+.select-content [data-radix-select-viewport]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 /* --------------------------------
  * Item — base
  * -------------------------------- */
